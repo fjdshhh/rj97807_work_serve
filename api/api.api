@@ -1,0 +1,47 @@
+type LoginRequest {
+	Name string `json:"name"`
+	Pwd  string `json:"pwd"`
+}
+type LoginResponse {
+	Token   string `json:"token"`
+	ReToken string `json:"reToken"`
+	Role    int    `json:"role"`
+}
+type RegisterRequest {
+	Name string `json:"name"`
+	Pwd  string `json:"pwd"`
+}
+type RegisterResponse {
+	Message string `json:"message"`
+}
+type CollyShowRequest {
+	PageSize int64 `json:"pageSize"`
+	PageNum  int64 `json:"pageNum"`
+}
+type Article {
+	CreateTime  string `json:"createTime"`
+	Title       string `json:"title"`
+	Url         string `json:"url"`
+	Description string `json:"description"`
+}
+type CollyShowResponse {
+	TotalNum  int64     `json:"totalNum"`
+	TotalSize int64     `json:"totalSize"`
+	Data      []Article `json:"data"`
+}
+
+service api-api {
+	@handler UserLogin
+	post /user/login (LoginRequest) returns (LoginResponse)
+	
+	@handler UserRegister
+	post /user/register (RegisterRequest) returns (RegisterResponse)
+}
+
+@server(
+	middleware : Auth
+)
+service api-api {
+	@handler CollyShow
+	get /article/get (CollyShowRequest) returns (CollyShowResponse)
+}

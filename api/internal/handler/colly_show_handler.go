@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -16,7 +17,7 @@ func CollyShowHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.Error(w, err)
 			return
 		}
-
+		fmt.Println(req)
 		l := logic.NewCollyShowLogic(r.Context(), svcCtx)
 		resp, err := l.CollyShow(&req)
 		if err != nil {

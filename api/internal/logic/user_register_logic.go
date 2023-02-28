@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"rj97807_work_serve/api/models"
 	"rj97807_work_serve/funcs"
 
@@ -31,17 +31,28 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 	data.Name = req.Name
 	data.Password = funcs.Md5(req.Pwd)
 	data.Role = 0
-	//判断用户是否存在
-	var cnt int64
-	l.svcCtx.EngineWeb.Table("users").Where("name=?", req.Name).Count(&cnt)
-	if cnt > 0 {
-		err = errors.New("用户已被注册")
+	data.Uid = funcs.GetUUID()
+	data.Email = req.Email
+
+	RCode, err := l.svcCtx.RDB.Get(l.ctx, req.Email).Result()
+	if err != nil {
 		return
 	}
-	err = l.svcCtx.EngineWeb.Table("users").Create(&data).Error
-	if err == nil {
+	//验证通过
+	if RCode == req.Code {
+		err = l.svcCtx.EngineWeb.Table("users").Create(&data).Error
+		if err == nil {
+			resp = new(types.RegisterResponse)
+			resp.Message = "注册成功"
+			//注册完删除key
+			_, err := l.svcCtx.RDB.Del(l.ctx, req.Email).Result()
+			if err != nil {
+				fmt.Printf("%x", "失败"+err.Error())
+			}
+		}
+	} else {
 		resp = new(types.RegisterResponse)
-		resp.Message = "注册成功"
+		resp.Message = "验证码错误"
 	}
 	return
 }

@@ -19,8 +19,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/user/registerbefore",
+				Handler: UserRegisterBeforeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/user/register",
 				Handler: UserRegisterHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/article/get",
+				Handler: CollyShowHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user/refresh",
+				Handler: ReGetTokenHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/ws",
+				Handler: wsClientHandler(serverCtx),
 			},
 		},
 	)
@@ -30,9 +50,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.Auth},
 			[]rest.Route{
 				{
-					Method:  http.MethodGet,
-					Path:    "/article/get",
-					Handler: CollyShowHandler(serverCtx),
+					Method:  http.MethodPost,
+					Path:    "/user/getmenu",
+					Handler: GetUserMenuHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/file/upload",
+					Handler: FileUploadHandler(serverCtx),
 				},
 			}...,
 		),

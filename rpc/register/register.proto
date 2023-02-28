@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package rpc;
+
+option go_package = "./rpc";
+
+message MailRequest {
+    string name = 1;
+    string email = 2;
+}
+message MailResponse {
+    string message = 1;
+}
+
+service Rpc {
+    rpc GetMailChecked (MailRequest) returns (MailResponse);
+}

@@ -4,12 +4,23 @@
 *.dll
 *.so
 *.dylib
-/api/etc
+**.DS_Store
+*.ini
+**.ini
+.DS_Store
+.idea
+/api/files_template
+/utils/*
+/api/etc/*.yaml
+/api/logs
+/rpc/*/etc/*.yaml
 # Test binary, built with `go test -c`
 *.test
-
+/api/serve
+/default.etcd
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

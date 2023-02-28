@@ -8,4 +8,5 @@ type UserModel struct {
 	Name     string
 	Password string
 	Role     int
+	Email    string
 }

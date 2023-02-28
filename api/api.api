@@ -7,19 +7,28 @@ type LoginResponse {
 	ReToken string `json:"reToken"`
 	Role    int    `json:"role"`
 }
+type RegisterBeforeRequest {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+type RegisterBeforeResponse {
+	Message string `json:"message"`
+}
 type RegisterRequest {
-	Name string `json:"name"`
-	Pwd  string `json:"pwd"`
+	Name  string `json:"name"`
+	Pwd   string `json:"pwd"`
+	Email string `json:"email"`
+	Code  string `json:"code"`
 }
 type RegisterResponse {
 	Message string `json:"message"`
 }
 type CollyShowRequest {
-	PageSize int64 `json:"pageSize"`
-	PageNum  int64 `json:"pageNum"`
+	PageSize int64 `form:"pageSize"`
+	PageNum  int64 `form:"pageNum"`
 }
 type Article {
-	CreateTime  string `json:"createTime"`
+	Data        string `json:"data"`
 	Title       string `json:"title"`
 	Url         string `json:"url"`
 	Description string `json:"description"`
@@ -29,19 +38,75 @@ type CollyShowResponse {
 	TotalSize int64     `json:"totalSize"`
 	Data      []Article `json:"data"`
 }
+type Menu {
+	Name     string `json:"name"`
+	MenuChar int    `json:"menuChar"`
+}
+type GetMenuRequest {
+}
+type GetMenuResponse {
+	Data []Menu `json:"data"`
+}
 
+type FileUploadRequest {
+	Md5  string `json:"md5,optional"`
+	Name string `json:"name,optional"`
+	Ext  string `json:"ext,optional"`
+	Size int64  `json:"size,optional"`
+	Path string `json:"path,optional"`
+}
+type FileUploadResponse {
+	Uid  string `json:"uid"`
+	Ext  string `json:"ext"`
+	Name string `json:"name"`
+}
+
+type ReGetTokenRequest {
+	ReToken string `json:"reToken"`
+}
+type ReGetTokenResponse {
+	Token   string `json:"token"`
+	ReToken string `json:"reToken"`
+}
+type WsClientRequest {
+}
+type WsClientResponse {
+}
 service api-api {
+	@doc "登录用户"
 	@handler UserLogin
 	post /user/login (LoginRequest) returns (LoginResponse)
 	
+	@doc "发送验证码"
+	@handler UserRegisterBefore
+	post /user/registerbefore (RegisterBeforeRequest) returns (RegisterBeforeResponse)
+	
+	@doc "用户注册"
 	@handler UserRegister
 	post /user/register (RegisterRequest) returns (RegisterResponse)
+	
+	@doc "展示爬虫信息"
+	@handler CollyShow
+	get /article/get (CollyShowRequest) returns (CollyShowResponse)
+	
+	@doc "刷新Token"
+	@handler ReGetToken
+	post /user/refresh (ReGetTokenRequest) returns (ReGetTokenResponse)
+	
+	@doc "ws连接"
+	@handler wsClient
+	get /ws (WsClientRequest) returns (WsClientResponse)
 }
 
 @server(
 	middleware : Auth
 )
 service api-api {
-	@handler CollyShow
-	get /article/get (CollyShowRequest) returns (CollyShowResponse)
+	@doc "获取用户权限下的分类"
+	@handler GetUserMenu
+	post /user/getmenu (GetMenuRequest) returns (GetMenuResponse)
+	
+	@doc "文件上传"
+	@handler FileUpload
+	post /file/upload (FileUploadRequest) returns (FileUploadResponse)
 }

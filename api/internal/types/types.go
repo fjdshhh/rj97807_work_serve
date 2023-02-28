@@ -12,9 +12,20 @@ type LoginResponse struct {
 	Role    int    `json:"role"`
 }
 
+type RegisterBeforeRequest struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+type RegisterBeforeResponse struct {
+	Message string `json:"message"`
+}
+
 type RegisterRequest struct {
-	Name string `json:"name"`
-	Pwd  string `json:"pwd"`
+	Name  string `json:"name"`
+	Pwd   string `json:"pwd"`
+	Email string `json:"email"`
+	Code  string `json:"code"`
 }
 
 type RegisterResponse struct {
@@ -22,12 +33,12 @@ type RegisterResponse struct {
 }
 
 type CollyShowRequest struct {
-	PageSize int64 `json:"pageSize"`
-	PageNum  int64 `json:"pageNum"`
+	PageSize int64 `form:"pageSize"`
+	PageNum  int64 `form:"pageNum"`
 }
 
 type Article struct {
-	CreateTime  string `json:"createTime"`
+	Data        string `json:"data"`
 	Title       string `json:"title"`
 	Url         string `json:"url"`
 	Description string `json:"description"`
@@ -37,4 +48,45 @@ type CollyShowResponse struct {
 	TotalNum  int64     `json:"totalNum"`
 	TotalSize int64     `json:"totalSize"`
 	Data      []Article `json:"data"`
+}
+
+type Menu struct {
+	Name     string `json:"name"`
+	MenuChar int    `json:"menuChar"`
+}
+
+type GetMenuRequest struct {
+}
+
+type GetMenuResponse struct {
+	Data []Menu `json:"data"`
+}
+
+type FileUploadRequest struct {
+	Md5  string `json:"md5,optional"`
+	Name string `json:"name,optional"`
+	Ext  string `json:"ext,optional"`
+	Size int64  `json:"size,optional"`
+	Path string `json:"path,optional"`
+}
+
+type FileUploadResponse struct {
+	Uid  string `json:"uid"`
+	Ext  string `json:"ext"`
+	Name string `json:"name"`
+}
+
+type ReGetTokenRequest struct {
+	ReToken string `json:"reToken"`
+}
+
+type ReGetTokenResponse struct {
+	Token   string `json:"token"`
+	ReToken string `json:"reToken"`
+}
+
+type WsClientRequest struct {
+}
+
+type WsClientResponse struct {
 }

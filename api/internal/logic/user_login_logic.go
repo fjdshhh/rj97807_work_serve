@@ -5,6 +5,7 @@ import (
 	"rj97807_work_serve/api/models"
 	"rj97807_work_serve/funcs"
 	"rj97807_work_serve/utils"
+	"time"
 
 	"rj97807_work_serve/api/internal/svc"
 	"rj97807_work_serve/api/internal/types"
@@ -34,16 +35,21 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 		return nil, err
 	}
 	//生成token
-	useToken, err := funcs.YieldToken(int(data.ID), utils.TokenExpireTime, data.Uid, data.Name)
+	useToken, err := funcs.YieldToken(utils.TokenExpireTime, data.Uid, data.Name)
 	if err != nil {
 		return nil, err
 	}
 	//token过期则刷新
-	reFreshToken, err := funcs.YieldToken(int(data.ID), utils.ReTokenExpireTime, data.Uid, data.Name)
+	reFreshToken, err := funcs.YieldToken(utils.ReTokenExpireTime, data.Uid, data.Name)
+	if err != nil {
+		return nil, err
+	}
+	err = l.svcCtx.RDB.Set(l.ctx, req.Name, reFreshToken, time.Second*time.Duration(utils.ReTokenExpireTime)).Err()
 	if err != nil {
 		return nil, err
 	}
 	resp = new(types.LoginResponse)
+	logx.Info("用户登录:", data.Name)
 	resp.Token = useToken
 	resp.ReToken = reFreshToken
 	resp.Role = data.Role
